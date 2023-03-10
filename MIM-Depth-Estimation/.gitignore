@@ -1,0 +1,10 @@
+*.zip
+*.sh
+ckpt/
+code/logs/
+results/
+__pycache__/
+weights/
+logs/*
+.log/
+data/
