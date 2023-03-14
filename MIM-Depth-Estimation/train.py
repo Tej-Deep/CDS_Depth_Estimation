@@ -17,7 +17,7 @@ from models.model import GLPDepth
 from models.optimizer import build_optimizers
 import utils.metrics as metrics
 from utils.criterion import SiLogLoss
-import utils.logging as logging
+import utils.logging2 as logging
 
 from dataset.base_dataset import get_dataset
 from configs.train_options import TrainOptions
