@@ -6,24 +6,75 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inference from Depth Estimation</title>
+    <style>
+    table, th, td {
+        border: 3px solid black;
+        border-collapse: collapse;
+      }
+    </style>
 </head>
 <body>
+    <h1>Inference Results Visualisation</h1>
     <table>
         <thead>
-            <th>Original Image</th>
-            <th>True Label</th>
-            <th>Predicted Output</th>
+            <th><h2>Original Image</h2></th>
+            <th><h2>True Label</h2></th>
+            <th><h2>Predicted Output</h2></th>
         </thead>
         <tbody>
             <tr>
                 <td>
-                    <img src="./inference_images_example/rgb_00045.jpg" alt = "Original Image">
+                    <img src="./inference_images_example/bathroom_00045/rgb_00045.jpg" alt = "Original Image">
                 </td>
                 <td>
-                    <img src="./inference_images_example/True_label.png" alt = "True Label">
+                    <img src="./inference_images_example/bathroom_00045/True_label.png" alt = "True Label">
                 </td>
                 <td>
-                    <img src="./inference_images_example/bathroom_rgb_00045.jpg" alt = "Predicted Output">
+                    <img src="./inference_images_example/bathroom_00045/bathroom_rgb_00045.jpg" alt = "Predicted Output">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <img src="./inference_images_example/bedroom_00055/rgb_00055.jpg" alt = "Original Image">
+                </td>
+                <td>
+                    <img src="./inference_images_example/bedroom_00055/bedroom_label_00055.png" alt = "True Label">
+                </td>
+                <td>
+                    <img src="./inference_images_example/bedroom_00055/bedroom_rgb_00055.jpg" alt = "Predicted Output">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <img src="./inference_images_example/bookstore_00083/rgb_00083.jpg" alt = "Original Image">
+                </td>
+                <td>
+                    <img src="./inference_images_example/bookstore_00083/bookstore_label_00083.png" alt = "True Label">
+                </td>
+                <td>
+                    <img src="./inference_images_example/bookstore_00083/bookstore_rgb_00083.jpg" alt = "Predicted Output">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <img src="./inference_images_example/classroom_00283/rgb_00283.jpg" alt = "Original Image">
+                </td>
+                <td>
+                    <img src="./inference_images_example/classroom_00283/classroom_label_00283.png" alt = "True Label">
+                </td>
+                <td>
+                    <img src="./inference_images_example/classroom_00283/classroom_rgb_00283.jpg" alt = "Predicted Output">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <img src="./inference_images_example/computer_lab_000332/rgb_00332.jpg" alt = "Original Image">
+                </td>
+                <td>
+                    <img src="./inference_images_example/computer_lab_000332/computer_lab_label_00332.png" alt = "True Label">
+                </td>
+                <td>
+                    <img src="./inference_images_example/computer_lab_000332/computer_lab_rgb_00332.jpg" alt = "Predicted Output">
                 </td>
             </tr>
         </tbody>
