@@ -13,11 +13,11 @@ import torch.optim as optim
 import torch.backends.cudnn as cudnn
 from tensorboardX import SummaryWriter
 import torchvision
-from torchinfo import summary
+# from torchinfo import summary
 
-from models.model import GLPDepth, Decoder
-from models.resnet_model import UNetWithResnet50Encoder
-from models.optimizer import build_optimizers
+# from models.model import GLPDepth, Decoder
+# from models.resnet_model import UNetWithResnet50Encoder
+# from models.optimizer import build_optimizers
 import utils.metrics as metrics
 from utils.criterion import SiLogLoss
 import utils.logging2 as logging
@@ -25,30 +25,11 @@ import utils.logging2 as logging
 from dataset.base_dataset import get_dataset
 from configs.train_options import TrainOptions
 import glob
+from models.pretrained import enc_dec_model
 
 
 metric_name = ['d1', 'd2', 'd3', 'abs_rel', 'sq_rel', 'rmse', 'rmse_log',
                'log10', 'silog']
-
-
-def getCNNModel(args):
-    model = UNetWithResnet50Encoder(n_classes=1)
-
-    # init_conv = torch.nn.Conv2d(in_channels=1, out_channels=3, kernel_size=3)
-    # model = torchvision.models.resnet50(pretrained=True)
-    # for param in model.parameters():
-    #     param.requires_grad = False
-    
-    # model = torch.nn.Sequential(*(list(model.children())[:8]))
-
-    # decoder = Decoder(in_channels=2048, out_channels=256, args=args)
-    # decoder.init_weights()
-    # last_layer_depth = torch.nn.Sequential(
-    #         torch.nn.Conv2d(in_channels=256,out_channels= 256, kernel_size=3, stride=1, padding=1),
-    #         torch.nn.ReLU(inplace=False),
-    #         torch.nn.Conv2d(in_channels=256,out_channels= 1, kernel_size=3, stride=1, padding=1))
-    # model = torch.nn.Sequential(init_conv, model, decoder, last_layer_depth)
-    return model
 
 def load_model(ckpt, model, optimizer=None):
     ckpt_dict = torch.load(ckpt, map_location='cpu')
@@ -76,21 +57,22 @@ def main():
     args = opt.initialize().parse_args()
     print(args)
 
-    pretrain = args.pretrained.split('.')[0]
-    maxlrstr = str(args.max_lr).replace('.', '')
-    minlrstr = str(args.min_lr).replace('.', '')
-    layer_decaystr = str(args.layer_decay).replace('.', '')
-    weight_decaystr = str(args.weight_decay).replace('.', '')
-    num_filter = str(args.num_filters[0]) if args.num_deconv > 0 else ''
-    num_kernel = str(args.deconv_kernels[0]) if args.num_deconv > 0 else ''
-    name = [args.dataset, str(args.batch_size), pretrain.split('/')[-1], 'deconv'+str(args.num_deconv), \
-        str(num_filter), str(num_kernel), str(args.crop_h), str(args.crop_w), maxlrstr, minlrstr, \
-        layer_decaystr, weight_decaystr, str(args.epochs)]
-    if 'swin' in args.backbone:
-        for i in args.window_size:
-            name.append(str(i))
-        for i in args.depths:
-            name.append(str(i))
+    # pretrain = args.pretrained.split('.')[0]
+    # maxlrstr = str(args.max_lr).replace('.', '')
+    # minlrstr = str(args.min_lr).replace('.', '')
+    # layer_decaystr = str(args.layer_decay).replace('.', '')
+    # weight_decaystr = str(args.weight_decay).replace('.', '')
+    # num_filter = str(args.num_filters[0]) if args.num_deconv > 0 else ''
+    # num_kernel = str(args.deconv_kernels[0]) if args.num_deconv > 0 else ''
+    # name = [args.dataset, str(args.batch_size), pretrain.split('/')[-1], 'deconv'+str(args.num_deconv), \
+    #     str(num_filter), str(num_kernel), str(args.crop_h), str(args.crop_w), maxlrstr, minlrstr, \
+    #     layer_decaystr, weight_decaystr, str(args.epochs)]
+    # if 'swin' in args.backbone:
+    #     for i in args.window_size:
+    #         name.append(str(i))
+    #     for i in args.depths:
+    #         name.append(str(i))
+    name = ["Resnet_pretrained_v2"]
     if args.exp_name != '':
         name.append(args.exp_name)
 
@@ -110,7 +92,9 @@ def main():
     if not os.path.exists(result_dir):
         os.makedirs(result_dir)
     
-    model = GLPDepth(args=args)
+    # model = GLPDepth(args=args)
+    model = enc_dec_model(args.max_depth)
+    print(model)
 
     # CPU-GPU agnostic settings
     if args.gpu_or_cpu == 'gpu':
@@ -137,9 +121,10 @@ def main():
     # Training settings
     criterion_d = SiLogLoss()
 
-    optimizer = build_optimizers(model, dict(type='AdamW', lr=args.max_lr, betas=(0.9, 0.999), weight_decay=args.weight_decay,
-                constructor='SwinLayerDecayOptimizerConstructor',
-                paramwise_cfg=dict(num_layers=args.depths, layer_decay_rate=args.layer_decay, no_decay_names=['relative_position_bias_table', 'rpe_mlp', 'logit_scale'])))
+    optimizer = optim.Adam(model.parameters(),lr=args.max_lr, betas=(0.9, 0.999), weight_decay=args.weight_decay)
+    # build_optimizers(model, dict(type='AdamW', lr=args.max_lr, betas=(0.9, 0.999), weight_decay=args.weight_decay,
+    #             constructor='SwinLayerDecayOptimizerConstructor',
+    #             paramwise_cfg=dict(num_layers=args.depths, layer_decay_rate=args.layer_decay, no_decay_names=['relative_position_bias_table', 'rpe_mlp', 'logit_scale'])))
 
     start_ep = 1
     if args.resume_from:
@@ -217,7 +202,8 @@ def train(train_loader, model, criterion_d, log_txt, optimizer, device, epoch, a
                                             iterations/half_epoch - 1) ** 0.9 + args.max_lr)
 
         for param_group in optimizer.param_groups:
-            param_group['lr'] = current_lr*param_group['lr_scale'] if 'swin' in args.backbone else current_lr
+            # param_group['lr'] = current_lr*param_group['lr_scale'] if 'swin' in args.backbone else current_lr
+            param_group['lr'] = current_lr
 
         input_RGB = batch['image'].to(device)
         depth_gt = batch['depth'].to(device)
@@ -328,10 +314,5 @@ def validate(val_loader, model, criterion_d, device, epoch, args, log_dir):
 
 
 if __name__ == '__main__':
-    opt = TrainOptions()
-    args = opt.initialize().parse_args()
-    print(args)
-    model = getCNNModel(args)
-    summary(model,  input_size=(64, 3, 224, 224))
-    # print(model)
-    # main()
+    main()
+
