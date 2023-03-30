@@ -1,0 +1,17 @@
+Jupyter file for CDS Depth Estimation
+
+1. Extract data
+    a. Load data
+    b. Use data loader
+
+2. Create Model
+    a. CNN layer
+        i. Might need to use data transformer
+        ii. Extract relevant features
+        iii. Create layers
+            a. Linear layer (Multiple?)
+            b. Non-Linear layers (ReLU/Tanh/Sigmoid)
+        iv. Derive output
+
+3. Generate heatmap for depths
+4. Check accuracy
