@@ -25,7 +25,8 @@ import utils.logging2 as logging
 from dataset.base_dataset import get_dataset
 from configs.train_options import TrainOptions
 import glob
-from models.pretrained import enc_dec_model
+# from models.pretrained import enc_dec_model
+from models.cnn_attention import enc_dec_model
 
 
 metric_name = ['d1', 'd2', 'd3', 'abs_rel', 'sq_rel', 'rmse', 'rmse_log',
