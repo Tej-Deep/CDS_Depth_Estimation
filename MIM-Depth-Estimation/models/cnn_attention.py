@@ -50,7 +50,7 @@ class Net(nn.Module):
         self.dropout2 = nn.Dropout(0.5)
 
         # self.attention1 = torch.nn.MultiheadAttention(32, 2)
-        # self.attention2 = torch.nn.MultiheadAttention(64, 1)
+        self.attention2 = torch.nn.MultiheadAttention(64, 1)
         self.attention3 = torch.nn.MultiheadAttention(128, 8)
         self.attention4 = torch.nn.MultiheadAttention(2048, 8)
     
@@ -69,7 +69,7 @@ class Net(nn.Module):
         # x = apply_attention(x, mask, self.attention1)
         x = F.relu(x)
         x = self.conv2(x)
-        # x = apply_attention(x, mask, self.attention2)
+        x = apply_attention(x, mask, self.attention2)
         x = F.relu(x)
         x = F.max_pool2d(x, 2)
         x = self.dropout1(x)
@@ -79,7 +79,7 @@ class Net(nn.Module):
         x = apply_attention(x, mask, self.attention3)
         x = F.relu(x)
         x = self.conv4(x)
-        # x = apply_attention(x, mask, self.attention4)
+        x = apply_attention(x, mask, self.attention4)
         x = F.relu(x)
         output = x
         return output
@@ -111,7 +111,6 @@ if __name__ == "__main__":
     #                 channels=[2048,256,128,64,32,1],\
     #                 kernels=[3,3,3,3,3],\
     #                 strides = [2,2,2,2,2])
-    model = enc_dec_model(max_depth=10)
-    # .cuda()
+    model = enc_dec_model(max_depth=10).cuda()
     print(model)
     summary(model, input_size=(64,3,448,448))
