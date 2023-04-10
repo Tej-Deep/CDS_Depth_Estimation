@@ -45,13 +45,15 @@ class Net(nn.Module):
         self.conv1 = nn.Conv2d(3, 32, 3, 2)
         self.conv2 = nn.Conv2d(32, 64, 5, 2)
         self.conv3 = nn.Conv2d(64, 128, 5, 2, 1)
-        self.conv4 = nn.Conv2d(128, 2048, 5, 2, 2)
+        self.conv4 = nn.Conv2d(128, 1024, 5, 2, 2)
+        self.conv5 = nn.Conv2d(1024, 2048, 1, 1)
         self.dropout1 = nn.Dropout(0.25)
         self.dropout2 = nn.Dropout(0.5)
 
         self.attention2 = torch.nn.MultiheadAttention(64, 1)
         self.attention3 = torch.nn.MultiheadAttention(128, 8)
-        self.attention4 = torch.nn.MultiheadAttention(2048, 8)
+        self.attention4 = torch.nn.MultiheadAttention(1024, 8)
+        self.attention5 = torch.nn.MultiheadAttention(2048, 8)
     
     def forward(self, x, mask=None):
 
@@ -79,6 +81,9 @@ class Net(nn.Module):
         x = self.conv4(x)
         x = apply_attention(x, mask, self.attention4)
         x = F.relu(x)
+        x = self.conv5(x)
+        x = apply_attention(x, mask, self.attention5)
+        x = F.relu(x)
         output = x
         return output
     
@@ -94,13 +99,16 @@ class enc_dec_model(nn.Module):
         self.max_depth = max_depth
     def forward(self, x):
         x = self.encoder(x)
-        # x = self.bridge(x)
         x = self.decoder(x)
-        print(x.shape)
         x = x*self.max_depth
         return {'pred_d':x}
     
 if __name__ == "__main__":
-    model = enc_dec_model(max_depth=10).cuda()
+    if torch.cuda.is_available():
+        DEVICE = torch.device("cuda")
+        model = enc_dec_model(max_depth=10).cuda()
+    else:
+        model = enc_dec_model(max_depth=10)
+        
     print(model)
     summary(model, input_size=(64,3,448,448))

@@ -44,7 +44,7 @@ class Net(nn.Module):
         super(Net, self).__init__()
         self.conv1 = nn.Conv2d(3, 32, 3, 2)
         self.conv2 = nn.Conv2d(32, 64, 5, 2)
-        self.conv3 = nn.Conv2d(64, 128, 5, 2, 1)
+        self.conv3 = nn.Conv2d(64, 128, 5, 1, 3)
         self.conv4 = nn.Conv2d(128, 2048, 5, 2, 2)
         self.dropout1 = nn.Dropout(0.25)
         self.dropout2 = nn.Dropout(0.5)
@@ -76,6 +76,7 @@ class Net(nn.Module):
         x = self.conv3(x)
         x = apply_attention(x, mask, self.attention3)
         x = F.relu(x)
+        x = F.max_pool2d(x, 2)
         x = self.conv4(x)
         x = apply_attention(x, mask, self.attention4)
         x = F.relu(x)
@@ -96,7 +97,6 @@ class enc_dec_model(nn.Module):
         x = self.encoder(x)
         # x = self.bridge(x)
         x = self.decoder(x)
-        print(x.shape)
         x = x*self.max_depth
         return {'pred_d':x}
     

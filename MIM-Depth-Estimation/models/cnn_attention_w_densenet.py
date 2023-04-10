@@ -43,7 +43,7 @@ class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
         self.conv1 = nn.Conv2d(3, 32, 3, 2)
-        self.conv2 = nn.Conv2d(32, 64, 5, 2)
+        self.conv2 = nn.Conv2d(32, 64, 3, 2, 1)
         self.conv3 = nn.Conv2d(64, 128, 5, 2, 1)
         self.conv4 = nn.Conv2d(128, 2048, 5, 2, 2)
         self.dropout1 = nn.Dropout(0.25)
@@ -85,7 +85,12 @@ class Net(nn.Module):
 class enc_dec_model(nn.Module):
     def __init__(self, max_depth) -> None:
         super().__init__()
+        self.densenet = torchvision.models.densenet201(weights=torchvision.models.DenseNet201_Weights.DEFAULT)
+        for param in self.densenet.parameters():
+            param.requires_grad = False
+        self.densenet = torch.nn.Sequential(*(list(self.densenet.children())[:-2]))
         self.encoder = Net()
+        # self.bridge = nn.Conv2d(2048, 2048, 1, 1)
         self.decoder = Decoder(num_layers=5,\
                                 channels=[2048,256,128,64,32,1],\
                                 kernels=[3,3,3,3,3],\
@@ -93,10 +98,9 @@ class enc_dec_model(nn.Module):
                                  activations=['relu', 'relu', 'relu' ,'relu', 'sigmoid'])
         self.max_depth = max_depth
     def forward(self, x):
+        x = self.densenet(x)
         x = self.encoder(x)
-        # x = self.bridge(x)
         x = self.decoder(x)
-        print(x.shape)
         x = x*self.max_depth
         return {'pred_d':x}
     

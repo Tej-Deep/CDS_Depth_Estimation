@@ -26,7 +26,12 @@ from dataset.base_dataset import get_dataset
 from configs.train_options import TrainOptions
 import glob
 # from models.pretrained import enc_dec_model
-from models.cnn_attention import enc_dec_model
+# from models.cnn_attention import enc_dec_model
+# from models.cnn_attention_v2 import enc_dec_model
+from models.cnn_attention_w_densenet_v3 import CNN_ATTN_w_Densenet
+# from models.densenet import enc_dec_model
+# from models.cnn_attention_w_densenet import enc_dec_model
+
 
 
 metric_name = ['d1', 'd2', 'd3', 'abs_rel', 'sq_rel', 'rmse', 'rmse_log',
@@ -73,7 +78,7 @@ def main():
     #         name.append(str(i))
     #     for i in args.depths:
     #         name.append(str(i))
-    name = ["Resnet_pretrained_v2"]
+    name = ["cnn_attention_w_densenet_v3"]
     if args.exp_name != '':
         name.append(args.exp_name)
 
@@ -94,7 +99,7 @@ def main():
         os.makedirs(result_dir)
     
     # model = GLPDepth(args=args)
-    model = enc_dec_model(args.max_depth)
+    model = CNN_ATTN_w_Densenet(args.max_depth)
     print(model)
 
     # CPU-GPU agnostic settings
@@ -196,11 +201,11 @@ def train(train_loader, model, criterion_d, log_txt, optimizer, device, epoch, a
         global_step += 1
 
         if global_step < iterations * half_epoch:
-            current_lr = (args.max_lr - args.min_lr) * (global_step /
-                                            iterations/half_epoch) ** 0.9 + args.min_lr
+            current_lr = args.max_lr - (args.max_lr - args.min_lr) * (global_step /
+                                            iterations/half_epoch) ** 0.9
         else:
-            current_lr = max(args.min_lr, (args.min_lr - args.max_lr) * (global_step /
-                                            iterations/half_epoch - 1) ** 0.9 + args.max_lr)
+            current_lr = min(args.min_lr, args.max_lr - (args.max_lr - args.min_lr) * (global_step /
+                                            iterations/half_epoch) ** 0.9)
 
         for param_group in optimizer.param_groups:
             # param_group['lr'] = current_lr*param_group['lr_scale'] if 'swin' in args.backbone else current_lr
