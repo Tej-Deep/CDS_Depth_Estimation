@@ -62,7 +62,6 @@ def main():
     opt = TrainOptions()
     args = opt.initialize().parse_args()
     print(args)
-
     # pretrain = args.pretrained.split('.')[0]
     # maxlrstr = str(args.max_lr).replace('.', '')
     # minlrstr = str(args.min_lr).replace('.', '')
@@ -199,13 +198,14 @@ def train(train_loader, model, criterion_d, log_txt, optimizer, device, epoch, a
     result_lines = []
     for batch_idx, batch in enumerate(train_loader):      
         global_step += 1
-
-        if global_step < iterations * half_epoch:
-            current_lr = args.max_lr - (args.max_lr - args.min_lr) * (global_step /
-                                            iterations/half_epoch) ** 0.9
-        else:
-            current_lr = min(args.min_lr, args.max_lr - (args.max_lr - args.min_lr) * (global_step /
-                                            iterations/half_epoch) ** 0.9)
+        percent = (100 - global_step)/10000
+        current_lr = max((args.max_lr) ** (1.0 - percent), args.min_lr)
+        # if global_step < iterations * half_epoch:
+        #     current_lr = (args.max_lr - args.min_lr) * (global_step /
+        #                                     iterations/half_epoch) ** 0.9 + args.min_lr
+        # else:
+        #     current_lr = max(args.min_lr, (args.min_lr - args.max_lr) * (global_step /
+        #                                     iterations/half_epoch - 1) ** 0.9 + args.max_lr)
 
         for param_group in optimizer.param_groups:
             # param_group['lr'] = current_lr*param_group['lr_scale'] if 'swin' in args.backbone else current_lr
