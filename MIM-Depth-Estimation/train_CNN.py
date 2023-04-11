@@ -28,7 +28,8 @@ import glob
 # from models.pretrained import enc_dec_model
 # from models.cnn_attention import enc_dec_model
 # from models.cnn_attention_v2 import enc_dec_model
-from models.cnn_attention_w_densenet_v3 import CNN_ATTN_w_Densenet
+# from models.cnn_attention_w_densenet_v4 import CNN_ATTN_w_Densenet
+from models.densenet_v2 import Densenet
 # from models.densenet import enc_dec_model
 # from models.cnn_attention_w_densenet import enc_dec_model
 
@@ -77,7 +78,7 @@ def main():
     #         name.append(str(i))
     #     for i in args.depths:
     #         name.append(str(i))
-    name = ["cnn_attention_w_densenet_v3"]
+    name = ["densenet_v2"]
     if args.exp_name != '':
         name.append(args.exp_name)
 
@@ -98,7 +99,7 @@ def main():
         os.makedirs(result_dir)
     
     # model = GLPDepth(args=args)
-    model = CNN_ATTN_w_Densenet(args.max_depth)
+    model = Densenet(args.max_depth)
     print(model)
 
     # CPU-GPU agnostic settings
@@ -198,7 +199,7 @@ def train(train_loader, model, criterion_d, log_txt, optimizer, device, epoch, a
     result_lines = []
     for batch_idx, batch in enumerate(train_loader):      
         global_step += 1
-        percent = (100 - global_step)/10000
+        percent = (100 - global_step)/100000
         current_lr = max((args.max_lr) ** (1.0 - percent), args.min_lr)
         # if global_step < iterations * half_epoch:
         #     current_lr = (args.max_lr - args.min_lr) * (global_step /
