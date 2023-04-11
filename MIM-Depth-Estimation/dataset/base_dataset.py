@@ -32,12 +32,12 @@ class BaseDataset(Dataset):
             A.RandomBrightnessContrast(),
             A.RandomGamma(),
             A.HueSaturationValue(),
-            # New Values
-            A.ColorJitter(),
-            A.Emboss(),
-            A.FancyPCA(),
-            A.ISONoise(),
-            A.PixelDropout()
+            # # New Values
+            # A.ColorJitter(),
+            # A.Emboss(),
+            # A.FancyPCA(),
+            # A.ISONoise(),
+            # A.PixelDropout()
         ]
         self.basic_transform = basic_transform    
         self.to_tensor = transforms.ToTensor()
