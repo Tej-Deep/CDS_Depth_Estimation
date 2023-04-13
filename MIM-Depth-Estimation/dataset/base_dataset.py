@@ -31,7 +31,13 @@ class BaseDataset(Dataset):
             A.RandomCrop(crop_size[0], crop_size[1]),
             A.RandomBrightnessContrast(),
             A.RandomGamma(),
-            A.HueSaturationValue()
+            A.HueSaturationValue(),
+            # # New Values
+            # A.ColorJitter(),
+            # A.Emboss(),
+            # A.FancyPCA(),
+            # A.ISONoise(),
+            # A.PixelDropout()
         ]
         self.basic_transform = basic_transform    
         self.to_tensor = transforms.ToTensor()
