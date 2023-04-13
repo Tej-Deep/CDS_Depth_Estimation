@@ -25,7 +25,7 @@ import utils.logging2 as logging
 from dataset.base_dataset import get_dataset
 from configs.train_options import TrainOptions
 import glob
-from models.pretrained import enc_dec_model
+from models.pretrained_decv2 import enc_dec_model
 
 
 metric_name = ['d1', 'd2', 'd3', 'abs_rel', 'sq_rel', 'rmse', 'rmse_log',
@@ -72,7 +72,7 @@ def main():
     #         name.append(str(i))
     #     for i in args.depths:
     #         name.append(str(i))
-    name = ["Resnet_pretrained_v2"]
+    name = ["Resnet_pretrained_v3dec_small_lr_reducedv2max"]
     if args.exp_name != '':
         name.append(args.exp_name)
 
@@ -127,7 +127,7 @@ def main():
     #             paramwise_cfg=dict(num_layers=args.depths, layer_decay_rate=args.layer_decay, no_decay_names=['relative_position_bias_table', 'rpe_mlp', 'logit_scale'])))
 
     start_ep = 1
-    if args.resume_from:
+    if args.resume_from: # --resume_from ckpt_path
         load_model(args.resume_from, model.module, optimizer)
         strlength = len('_model.ckpt')
         resume_ep = int(args.resume_from[-strlength-2:-strlength])

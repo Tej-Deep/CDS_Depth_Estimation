@@ -3,6 +3,35 @@ import torch.nn as nn
 import torchvision
 from torchinfo import summary
 
+class conv_block(nn.Module):
+    def __init__(self, in_c, out_c, act):
+        super().__init__()
+
+        self.conv1 = nn.Conv2d(in_c, out_c, kernel_size=3, padding=1)
+        self.bn1 = nn.BatchNorm2d(out_c)
+
+        self.conv2 = nn.Conv2d(out_c, out_c, kernel_size=3, padding=1)
+        self.bn2 = nn.BatchNorm2d(out_c)
+
+        if act == 'relu':
+            self.activation = nn.ReLU()
+        elif act == 'sigmoid':
+            self.activation = nn.Sigmoid()
+        else:
+            self.activation = nn.Identity()
+
+        # self.relu = nn.ReLU()
+
+    def forward(self, inputs):
+        x = self.conv1(inputs)
+        x = self.bn1(x)
+        x = self.activation(x)
+
+        x = self.conv2(x)
+        x = self.bn2(x)
+        x = self.activation(x)
+
+        return x
 class Decoder_block(nn.Module):
     def __init__(self, in_channel, out_channel, kernel, stride, padding=1, out_padding=1, act = 'relu') -> None:
         super().__init__()
@@ -34,6 +63,7 @@ class Decoder(nn.Module):
                                               kernel=kernels[i],\
                                                 stride=strides[i],\
                                                  act=activations[i]))
+            self.layers.append(conv_block(in_c=channels[i+1],out_c=channels[i+1], act= activations[i]))
         self.model = nn.Sequential(*self.layers)
     def forward(self, x):
         return self.model(x)
@@ -50,19 +80,19 @@ class enc_dec_model(nn.Module):
             activations=['relu', 'relu', 'relu' ,'relu', 'sigmoid']
         for param in self.encoder.parameters():
             param.requires_grad = False
-        for i, child in enumerate(self.encoder.children()):
-            if i == 7:
-                for j, child2 in enumerate(child.children()):
-                    if j == 2:
-                        # print("count:", j)
-                        # print(child2)
-                        for param in child2.parameters():
-                            param.requires_grad = True
-            if i>=8:
-                # print("count:", i)
-                # print(child)
-                for param in child.parameters():
-                    param.requires_grad = True
+        # for i, child in enumerate(self.encoder.children()):
+        #     if i == 7:
+        #         for j, child2 in enumerate(child.children()):
+        #             if j == 2:
+        #                 # print("count:", j)
+        #                 # print(child2)
+        #                 for param in child2.parameters():
+        #                     param.requires_grad = True
+        #     if i>=8:
+        #         # print("count:", i)
+        #         # print(child)
+        #         for param in child.parameters():
+        #             param.requires_grad = True
         # input(":")
         self.encoder = torch.nn.Sequential(*(list(self.encoder.children())[:-2]))
         # self.bridge = nn.Conv2d(2048, 2048, 1, 1)
