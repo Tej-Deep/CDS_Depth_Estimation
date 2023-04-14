@@ -109,21 +109,49 @@ class Enc_Dec_Model(nn.Module):
         out_depth = torch.sigmoid(outputs)
         return out_depth
 
-class Decoder_Block(nn.Module):
+class Decoder(nn.Module):
+    def __init__(self):
+        super(Decoder, self).__init__()
 
-    def __init__(self, in_c, out_c):
+        """ Decoder """
+        self.d1 = Decoder_Block(1920, 2048)
+        self.d2 = Decoder_Block(2048, 1024)
+        self.d3 = Decoder_Block(1024, 512)
+        self.d4 = Decoder_Block(512, 256)
+        self.d5 = Decoder_Block(256, 128)
+        # self.d6 = Decoder_Block(128, 64)
+        
+        """ Classifier """
+        self.outputs = nn.Conv2d(128, 1, kernel_size=1, padding=0)
+    
+    def forward(self, x):
+        """ Decoder """
+        # b = self.MHA2(b)
+        x = self.d1(x)
+        x = self.d2(x)
+        x = self.d3(x)
+        x = self.d4(x)   
+        x = self.d5(x)   
+        # x = self.d6(x)      
+
+        """ Classifier """
+        outputs = self.outputs(x)
+        out_depth = torch.sigmoid(outputs)
+        return out_depth
+
+class Decoder_Block(nn.Module):
+    def __init__(self, in_c, out_c, activation_fn=nn.LeakyReLU):
         super().__init__()
 
-        self.up = nn.Upsample(scale_factor=2, mode="bilinear", align_corners=True)
-        self.ag = attention_gate(in_c, out_c)
-        self.c1 = Conv_Block(in_c[0]+out_c, out_c)
+        self.up = nn.ConvTranspose2d(in_c, out_c, kernel_size=2, stride=2, padding=0)
+        self.conv = Conv_Block(out_c, out_c, activation_fn)
 
-    def forward(self, x, s):
-        x = self.up(x)
-        s = self.ag(x, s)
-        x = torch.cat([x, s], axis=1)
-        x = self.c1(x)
+    def forward(self, inputs):
+        x = self.up(inputs)
+        x = self.conv(x)
+
         return x
+    
     
 class Densenet(nn.Module):
     def __init__(self, max_depth) -> None:
@@ -132,13 +160,15 @@ class Densenet(nn.Module):
         for param in self.densenet.features.parameters():
             param.requires_grad = True
 
-        self.densenet = torch.nn.Sequential(*(list(self.densenet.children())[:-2]))
-        self.enc_dec_model = Enc_Dec_Model()
+        self.densenet = torch.nn.Sequential(*(list(self.densenet.children())[:-1]))
+        self.decoder = Decoder()
+        # self.enc_dec_model = Enc_Dec_Model()
         self.max_depth = max_depth
 
     def forward(self, x):
         x = self.densenet(x)
-        x = self.enc_dec_model(x)
+        x = self.decoder(x)
+        # x = self.enc_dec_model(x)
         x = x*self.max_depth
         # print(x.shape)
         return {'pred_d':x}

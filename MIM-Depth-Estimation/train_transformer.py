@@ -29,8 +29,7 @@ import glob
 # from models.cnn_attention import enc_dec_model
 # from models.cnn_attention_v2 import enc_dec_model
 # from models.cnn_attention_w_densenet_v4 import CNN_ATTN_w_Densenet
-from models.densenet_v2 import Densenet
-from models.resnet_densenet import Combined
+from models.transformer import VTransformer
 # from models.densenet import enc_dec_model
 # from models.cnn_attention_w_densenet import enc_dec_model
 
@@ -76,10 +75,10 @@ def main():
     #     layer_decaystr, weight_decaystr, str(args.epochs)]
     # if 'swin' in args.backbone:
     #     for i in args.window_size:
-    #         name.append(str(ni))
+    #         name.append(str(i))
     #     for i in args.depths:
     #         name.append(str(i))
-    name = ["densenet_v2"]
+    name = ["transformer"]
     if args.exp_name != '':
         name.append(args.exp_name)
 
@@ -100,7 +99,7 @@ def main():
         os.makedirs(result_dir)
     
     # model = GLPDepth(args=args)
-    model = Densenet(args.max_depth)
+    model = VTransformer(args.max_depth)
     print(model)
 
     # CPU-GPU agnostic settings
@@ -130,7 +129,6 @@ def main():
     # Modifying lr
     args.max_lr = 5e-5
     args.min_lr = 3e-6
-
     optimizer = optim.Adam(model.parameters(),lr=args.max_lr, betas=(0.9, 0.999), weight_decay=args.weight_decay)
     # build_optimizers(model, dict(type='AdamW', lr=args.max_lr, betas=(0.9, 0.999), weight_decay=args.weight_decay,
     #             constructor='SwinLayerDecayOptimizerConstructor',
