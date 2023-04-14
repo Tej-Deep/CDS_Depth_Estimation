@@ -18,10 +18,31 @@ import utils.metrics as metrics
 from models.model import GLPDepth
 from dataset.base_dataset import get_dataset
 from configs.test_options import TestOptions
+from models.pretrained_decv2 import enc_dec_model
 
 
 metric_name = ['d1', 'd2', 'd3', 'abs_rel', 'sq_rel', 'rmse', 'rmse_log',
                'log10', 'silog']
+
+def load_model(ckpt, model, optimizer=None):
+    ckpt_dict = torch.load(ckpt, map_location='cpu')
+    # keep backward compatibility
+    if 'model' not in ckpt_dict and 'optimizer' not in ckpt_dict:
+        state_dict = ckpt_dict
+    else:
+        state_dict = ckpt_dict['model']
+    weights = {}
+    for key, value in state_dict.items():
+        if key.startswith('module.'):
+            weights[key[len('module.'):]] = value
+        else:
+            weights[key] = value
+
+    model.load_state_dict(weights)
+
+    if optimizer is not None:
+        optimizer_state = ckpt_dict['optimizer']
+        optimizer.load_state_dict(optimizer_state)
 
 
 def main():
@@ -47,12 +68,14 @@ def main():
             result_metrics[metric] = 0.0
 
     print("\n1. Define Model")
-    model = GLPDepth(args=args).to(device)
+    # model = GLPDepth(args=args).to(device)
+    model = enc_dec_model(args.max_depth).to(device)
+    load_model(args.ckpt_dir,model)
     
-    model_weight = torch.load(args.ckpt_dir)
-    if 'module' in next(iter(model_weight.items()))[0]:
-        model_weight = OrderedDict((k[7:], v) for k, v in model_weight.items())
-    model.load_state_dict(model_weight)
+    # model_weight = torch.load(args.ckpt_dir)
+    # # if 'module' in next(iter(model_weight.items()))[0]:
+    # #     model_weight = OrderedDict((k[7:], v) for k, v in model_weight.items())
+    # model.load_state_dict(model_weight['model'])
     model.eval()
 
     print("\n2. Define Dataloader")
@@ -84,6 +107,8 @@ def main():
                 input_RGB = torch.cat(sliding_images, dim=0)
             if args.flip_test:
                 input_RGB = torch.cat((input_RGB, torch.flip(input_RGB, [3])), dim=0)
+            # print(input_RGB.dtype)
+            # assert False
             pred = model(input_RGB)
         pred_d = pred['pred_d']
         if args.flip_test:
@@ -119,7 +144,10 @@ def main():
             
         if args.save_visualize:
             save_path = os.path.join(result_path, filename[0])
+            # print(pred_d)
+            # input(":")
             pred_d_numpy = pred_d.squeeze().cpu().numpy()
+            # pred_d_numpy = (pred_d_numpy - pred_d_numpy.mean())/pred_d_numpy.std()
             pred_d_numpy = (pred_d_numpy / pred_d_numpy.max()) * 255
             pred_d_numpy = pred_d_numpy.astype(np.uint8)
             pred_d_color = cv2.applyColorMap(pred_d_numpy, cv2.COLORMAP_RAINBOW)
