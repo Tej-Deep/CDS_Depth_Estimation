@@ -29,12 +29,10 @@ import glob
 # from models.cnn_attention import enc_dec_model
 # from models.cnn_attention_v2 import enc_dec_model
 # from models.cnn_attention_w_densenet_v4 import CNN_ATTN_w_Densenet
-from models.densenet_v2 import Densenet
-from models.resnet_densenet import Combined
+from models.transformer import VTransformer
 # from models.densenet import enc_dec_model
 # from models.cnn_attention_w_densenet import enc_dec_model
 
-from models.pretrained_decv2 import enc_dec_model
 
 
 metric_name = ['d1', 'd2', 'd3', 'abs_rel', 'sq_rel', 'rmse', 'rmse_log',
@@ -77,10 +75,10 @@ def main():
     #     layer_decaystr, weight_decaystr, str(args.epochs)]
     # if 'swin' in args.backbone:
     #     for i in args.window_size:
-    #         name.append(str(ni))
+    #         name.append(str(i))
     #     for i in args.depths:
     #         name.append(str(i))
-    name = ["Resnet_pretrained_v3dec_small_lr_reducedv2max"]
+    name = ["transformer"]
     if args.exp_name != '':
         name.append(args.exp_name)
 
@@ -101,7 +99,7 @@ def main():
         os.makedirs(result_dir)
     
     # model = GLPDepth(args=args)
-    model = Densenet(args.max_depth)
+    model = VTransformer(args.max_depth)
     print(model)
 
     # CPU-GPU agnostic settings
@@ -131,14 +129,13 @@ def main():
     # Modifying lr
     args.max_lr = 5e-5
     args.min_lr = 3e-6
-
     optimizer = optim.Adam(model.parameters(),lr=args.max_lr, betas=(0.9, 0.999), weight_decay=args.weight_decay)
     # build_optimizers(model, dict(type='AdamW', lr=args.max_lr, betas=(0.9, 0.999), weight_decay=args.weight_decay,
     #             constructor='SwinLayerDecayOptimizerConstructor',
     #             paramwise_cfg=dict(num_layers=args.depths, layer_decay_rate=args.layer_decay, no_decay_names=['relative_position_bias_table', 'rpe_mlp', 'logit_scale'])))
 
     start_ep = 1
-    if args.resume_from: # --resume_from ckpt_path
+    if args.resume_from:
         load_model(args.resume_from, model.module, optimizer)
         strlength = len('_model.ckpt')
         resume_ep = int(args.resume_from[-strlength-2:-strlength])
