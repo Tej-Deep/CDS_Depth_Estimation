@@ -59,56 +59,6 @@ class Conv_Block(nn.Module):
 
         return x
 
-class Encoder_Block(nn.Module):
-    def __init__(self, in_c, out_c):
-        super().__init__()
-
-        self.conv = Conv_Block(in_c, out_c)
-        self.pool = nn.MaxPool2d((2, 2))
-
-    def forward(self, inputs):
-        x = self.conv(inputs)
-        p = self.pool(x)
-
-        return x, p
-    
-class Enc_Dec_Model(nn.Module):
-    def __init__(self):
-        super(Enc_Dec_Model, self).__init__()
-        self.encoder1 = Encoder_Block(3, 64)
-        self.encoder2 = Encoder_Block(64, 128)
-        self.encoder3 = Encoder_Block(128, 256)
-        """ Bottleneck """
-        self.bottleneck = Conv_Block(256, 512)
-
-        """ Decoder """
-        self.d1 = Decoder_Block([512, 256], 256)
-        self.d2 = Decoder_Block([256, 128], 128)
-        self.d3 = Decoder_Block([128, 64], 64)
-        
-        """ Classifier """
-        self.outputs = nn.Conv2d(64, 1, kernel_size=1, padding=0)
-    
-    def forward(self, x):
-
-        """ Encoder """
-        s1, p1 = self.encoder1(x)
-        s2, p2 = self.encoder2(p1)
-        s3, p3 = self.encoder3(p2)
-
-        """ Bottleneck """
-        b = self.bottleneck(p3)
-
-        """ Decoder """
-        d1 = self.d1(b, s3)
-        d2 = self.d2(d1, s2)
-        d3 = self.d3(d2, s1)      
-
-        """ Classifier """
-        outputs = self.outputs(d3)
-        out_depth = torch.sigmoid(outputs)
-        return out_depth
-
 class Decoder(nn.Module):
     def __init__(self):
         super(Decoder, self).__init__()
@@ -160,9 +110,14 @@ class Densenet(nn.Module):
         for param in self.densenet.features.parameters():
             param.requires_grad = False
 
+        for param in self.densenet.features.denseblock4.parameters():
+            param.requires_grad = True
+
+        for param in self.densenet.features.norm5.parameters():
+            param.requires_grad = True
+
         self.densenet = torch.nn.Sequential(*(list(self.densenet.children())[:-1]))
         self.decoder = Decoder()
-        # self.enc_dec_model = Enc_Dec_Model()
         self.max_depth = max_depth
 
     def forward(self, x):

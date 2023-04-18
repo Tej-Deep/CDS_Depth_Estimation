@@ -1,2 +1,4 @@
 ﻿Model,silog_loss
 A,0.5
+densenet_w_attn_epoch_02_model,0.257
+densenet_w_attn_epoch_15_model,0.2142
