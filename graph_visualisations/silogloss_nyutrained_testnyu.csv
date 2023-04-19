@@ -1,12 +1,8 @@
 ﻿Model,silog_loss
 A,0.5
-densenet_w_attn_epoch_02_model,0.257
-densenet_w_attn_epoch_15_model,0.2142
+densenet_epoch_02_model,0.257
+densenet_epoch_15_model,0.2142
 Resnet_v3dec_small_lr,0.2634
 Resnet_v3dec,0.3439
 Resnet_v1dec,0.4025
-cnn_attention_v3_epoch_09_model,
-unet_resnet50_encoder,0.3460
-unet_resnet18_encoder,0.3623
-unet_with_attention,0.4093
-vanilla_unet,0.3250
+cnn_attention_v3_epoch_09_model,0.4023
