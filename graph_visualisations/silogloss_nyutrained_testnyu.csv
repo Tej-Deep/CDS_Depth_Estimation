@@ -5,3 +5,4 @@ densenet_w_attn_epoch_15_model,0.2142
 Resnet_v3dec_small_lr,0.2634
 Resnet_v3dec,0.3439
 Resnet_v1dec,0.4025
+cnn_attention_v3_epoch_09_model,

@@ -80,7 +80,7 @@ def main():
     #         name.append(str(ni))
     #     for i in args.depths:
     #         name.append(str(i))
-    name = ["densenet_v2"]
+    name = ["densenet_v2_kitti_and_nyu_v2"]
     if args.exp_name != '':
         name.append(args.exp_name)
 
