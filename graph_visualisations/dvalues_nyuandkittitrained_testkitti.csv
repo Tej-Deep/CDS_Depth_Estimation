@@ -1,3 +1,7 @@
 ﻿Model,d1,d2,d3
 A,0.5,0.5,0.5
 densenet_nyu_then_kitti_epoch_10_model,0.787,0.9411,0.985
+vanilla_unet,0.2269,0.4487,0.674
+attention_unet,0.227,0.449,0.6746
+unet_resnet18_encoder,0.573,0.8189,0.9274
+unet_resnet50_encoder,0.5368,0.7618,0.8757
