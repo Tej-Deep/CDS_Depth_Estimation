@@ -18,6 +18,7 @@ import utils.metrics as metrics
 # from models.model import GLPDepth
 from models.densenet_v2 import Densenet
 from models.pretrained_decv2 import enc_dec_model
+from models.densenet_v2_frozen import Densenet
 from dataset.base_dataset import get_dataset
 from configs.test_options import TestOptions
 
