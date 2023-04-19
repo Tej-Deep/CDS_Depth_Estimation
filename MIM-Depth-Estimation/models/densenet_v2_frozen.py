@@ -110,11 +110,11 @@ class Densenet(nn.Module):
         for param in self.densenet.features.parameters():
             param.requires_grad = False
 
-        for param in self.densenet.features.denseblock4.parameters():
-            param.requires_grad = True
+        # for param in self.densenet.features.denseblock4.parameters():
+        #     param.requires_grad = True
 
-        for param in self.densenet.features.norm5.parameters():
-            param.requires_grad = True
+        # for param in self.densenet.features.norm5.parameters():
+        #     param.requires_grad = True
 
         self.densenet = torch.nn.Sequential(*(list(self.densenet.children())[:-1]))
         self.decoder = Decoder()

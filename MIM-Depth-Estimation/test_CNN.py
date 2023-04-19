@@ -16,7 +16,7 @@ import torch.backends.cudnn as cudnn
 import utils.logging2 as logging
 import utils.metrics as metrics
 # from models.model import GLPDepth
-from models.densenet_v2 import Densenet
+from models.densenet_v2_frozen import Densenet
 from dataset.base_dataset import get_dataset
 from configs.test_options import TestOptions
 
