@@ -1,2 +1,3 @@
 ﻿Model,silog_loss
 A,0.5
+densenet_w_attn_nyu_then_kitti_epoch_10_model,0.6361

@@ -29,8 +29,8 @@ import glob
 # from models.cnn_attention import enc_dec_model
 # from models.cnn_attention_v2 import enc_dec_model
 # from models.cnn_attention_w_densenet_v4 import CNN_ATTN_w_Densenet
-# from models.densenet_v2 import Densenet
-# from models.resnet_densenet import Combined
+# from models.densenet_v2_frozen import Densenet
+# # from models.resnet_densenet import Combined
 # from models.densenet import enc_dec_model
 # from models.cnn_attention_w_densenet import enc_dec_model
 
@@ -80,7 +80,7 @@ def main():
     #         name.append(str(ni))
     #     for i in args.depths:
     #         name.append(str(i))
-    name = ["Resnet_pretrained_v3dec_small_lr_unfreeze1_nyudepth"]
+    name = ["densenet_v2"]
     if args.exp_name != '':
         name.append(args.exp_name)
 
