@@ -69,7 +69,7 @@ class Decoder(nn.Module):
         return self.model(x)
 
 class enc_dec_model(nn.Module):
-    def __init__(self, max_depth=10, backbone='resnet') -> None:
+    def __init__(self, max_depth=10, backbone='resnet', unfreeze = False) -> None:
         super().__init__()
         if backbone == 'resnet':
             self.encoder = torchvision.models.resnet50(weights=torchvision.models.ResNet50_Weights.DEFAULT)
@@ -78,21 +78,25 @@ class enc_dec_model(nn.Module):
             kernels=[3,3,3,3,3]
             strides = [2,2,2,2,2]
             activations=['relu', 'relu', 'relu' ,'relu', 'sigmoid']
-        for param in self.encoder.parameters():
-            param.requires_grad = False
-        # for i, child in enumerate(self.encoder.children()):
-        #     if i == 7:
-        #         for j, child2 in enumerate(child.children()):
-        #             if j == 2:
-        #                 # print("count:", j)
-        #                 # print(child2)
-        #                 for param in child2.parameters():
-        #                     param.requires_grad = True
-        #     if i>=8:
-        #         # print("count:", i)
-        #         # print(child)
-        #         for param in child.parameters():
-        #             param.requires_grad = True
+        if unfreeze:
+            for param in self.encoder.parameters():
+                param.requires_grad = True
+        else:    
+            for param in self.encoder.parameters():
+                param.requires_grad = False
+            for i, child in enumerate(self.encoder.children()):
+                if i == 7:
+                    for j, child2 in enumerate(child.children()):
+                        if j == 2:
+                            # print("count:", j)
+                            # print(child2)
+                            for param in child2.parameters():
+                                param.requires_grad = True
+                if i>=8:
+                    # print("count:", i)
+                    # print(child)
+                    for param in child.parameters():
+                        param.requires_grad = True
         # input(":")
         self.encoder = torch.nn.Sequential(*(list(self.encoder.children())[:-2]))
         # self.bridge = nn.Conv2d(2048, 2048, 1, 1)
@@ -117,6 +121,6 @@ if __name__ == "__main__":
     #                 channels=[2048,256,128,64,32,1],\
     #                 kernels=[3,3,3,3,3],\
     #                 strides = [2,2,2,2,2])
-    model = enc_dec_model().cuda()
+    model = enc_dec_model(unfreeze=True).cuda()
     print(model)
     summary(model, input_size=(64,3,448,448))
