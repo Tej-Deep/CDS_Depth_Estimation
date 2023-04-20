@@ -1,5 +1,4 @@
 import torch.nn as nn
-from torchinfo import summary
 import torchvision.models
 import torch
 
@@ -85,12 +84,4 @@ class ResNet18UNet(nn.Module):
         
     return {'pred_d': out_depth}
 
-if __name__ == "__main__":
-    # model = Decoder(num_layers=5,\
-    #                 channels=[2048,256,128,64,32,1],\
-    #                 kernels=[3,3,3,3,3],\
-    #                 strides = [2,2,2,2,2])
-    model = ResNet18UNet(max_depth=10).cuda()
-    # print(model)
-    summary(model, input_size=(1,3,256,256))
     
