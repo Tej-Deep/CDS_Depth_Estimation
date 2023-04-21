@@ -61,6 +61,8 @@ class ResNet18UNet(nn.Module):
 
     x = self.upsample(x)
     layer2 = self.layer2_1x1(layer2)
+    print(x.shape)
+    print(layer2.shape)
     x = torch.cat([x, layer2], dim=1)
     x = self.conv_up2(x)
 
@@ -84,4 +86,8 @@ class ResNet18UNet(nn.Module):
         
     return {'pred_d': out_depth}
 
+if __name__ == "__main__":
+    model = ResNet18UNet(max_depth=10).cuda()
+    # print(model)
+    summary(model, input_size=(1,3,256,256))
     
