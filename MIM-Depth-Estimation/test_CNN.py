@@ -16,6 +16,8 @@ import torch.backends.cudnn as cudnn
 import utils.logging2 as logging
 import utils.metrics as metrics
 # from models.model import GLPDepth
+from models.densenet_v2 import Densenet
+from models.pretrained_decv2 import enc_dec_model
 from models.densenet_v2_frozen import Densenet
 from dataset.base_dataset import get_dataset
 from configs.test_options import TestOptions
@@ -49,7 +51,8 @@ def main():
             result_metrics[metric] = 0.0
 
     print("\n1. Define Model")
-    model = Densenet(args.max_depth).to(device)
+    # model = Densenet(args.max_depth).to(device)
+    model = enc_dec_model(args.max_depth).to(device)
     print(model)
     # model = GLPDepth(args=args).to(device)
     
@@ -125,6 +128,10 @@ def main():
         if args.save_visualize:
             save_path = os.path.join(result_path, filename[0])
             pred_d_numpy = pred_d.squeeze().cpu().numpy()
+            # print(pred_d_numpy.max())
+            # print(pred_d_numpy[15:,:].max())
+            # assert False
+            # pred_d_numpy = np.clip((pred_d_numpy / pred_d_numpy[15:,:].max()) * 255, 0,255)
             pred_d_numpy = (pred_d_numpy / pred_d_numpy.max()) * 255
             pred_d_numpy = pred_d_numpy.astype(np.uint8)
             pred_d_color = cv2.applyColorMap(pred_d_numpy, cv2.COLORMAP_RAINBOW)

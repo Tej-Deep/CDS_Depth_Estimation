@@ -30,6 +30,7 @@ import glob
 # from models.cnn_attention_v2 import enc_dec_model
 # from models.cnn_attention_w_densenet_v4 import CNN_ATTN_w_Densenet
 # from models.densenet_v2_frozen import Densenet
+# from models.densenet_v2_frozen import Densenet
 # # from models.resnet_densenet import Combined
 # from models.densenet import enc_dec_model
 # from models.cnn_attention_w_densenet import enc_dec_model
@@ -64,6 +65,9 @@ def load_model(ckpt, model, optimizer=None):
 def main():
     opt = TrainOptions()
     args = opt.initialize().parse_args()
+    # Modifying lr
+    args.max_lr = 5e-5
+    args.min_lr = 5e-6
     print(args)
     # pretrain = args.pretrained.split('.')[0]
     # maxlrstr = str(args.max_lr).replace('.', '')
@@ -80,7 +84,7 @@ def main():
     #         name.append(str(ni))
     #     for i in args.depths:
     #         name.append(str(i))
-    name = ["densenet_v2_kitti_and_nyu_v2"]
+    name = ["Resnet_pretrained_v3dec_unfreeze_higher_lr_lowered"]
     if args.exp_name != '':
         name.append(args.exp_name)
 
@@ -129,9 +133,7 @@ def main():
 
     # Training settings
     criterion_d = SiLogLoss()
-    # Modifying lr
-    args.max_lr = 5e-5
-    args.min_lr = 3e-6
+
 
     optimizer = optim.Adam(model.parameters(),lr=args.max_lr, betas=(0.9, 0.999), weight_decay=args.weight_decay)
     # build_optimizers(model, dict(type='AdamW', lr=args.max_lr, betas=(0.9, 0.999), weight_decay=args.weight_decay,
