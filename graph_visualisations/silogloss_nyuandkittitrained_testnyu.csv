@@ -4,6 +4,6 @@ densenet_nyu_then_kitti,0.6361
 vanilla_unet,0.4229
 attention_unet,0.4232
 unet_resnet18_encoder,0.5235
-unet_resnet50_encoder,0.4012
+unet_resnet50_encoder,0.5059
 Resnet_v2dec_lower_lr,0.5786
 unet_resnet50_encoder,0.5059
