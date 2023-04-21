@@ -1,6 +1,6 @@
 ﻿Model,silog_loss
 A,0.5
-densenet_nyu_then_kitti_epoch_10_model,0.2007
+densenet_nyu_then_kitti,0.2007
 vanilla_unet,0.5758
 attention_unet,0.5756
 unet_resnet18_encoder,0.325

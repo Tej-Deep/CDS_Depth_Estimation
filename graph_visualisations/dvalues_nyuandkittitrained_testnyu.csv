@@ -1,6 +1,6 @@
 ﻿Model,d1,d2,d3
 A,0.5,0.5,0.5
-densenet_nyu_then_kitti_epoch_10_model,0.1048,0.2386,0.4246
+densenet_nyu_then_kitti,0.1048,0.2386,0.4246
 vanilla_unet,0.3266,0.6065,0.814
 attention_unet,0.3265,0.6064,0.8139
 unet_resnet18_encoder,0.2044,0.4213,0.6444
