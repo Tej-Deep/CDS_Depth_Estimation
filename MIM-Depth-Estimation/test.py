@@ -68,8 +68,8 @@ def main():
             result_metrics[metric] = 0.0
 
     print("\n1. Define Model")
-    # model = GLPDepth(args=args).to(device)
-    model = enc_dec_model(args.max_depth).to(device)
+    model = GLPDepth(args=args).to(device)
+    # model = enc_dec_model(args.max_depth).to(device)
     load_model(args.ckpt_dir,model)
     
     # model_weight = torch.load(args.ckpt_dir)
@@ -148,7 +148,9 @@ def main():
             # input(":")
             pred_d_numpy = pred_d.squeeze().cpu().numpy()
             # pred_d_numpy = (pred_d_numpy - pred_d_numpy.mean())/pred_d_numpy.std()
-            pred_d_numpy = (pred_d_numpy / pred_d_numpy.max()) * 255
+            # pred_d_numpy = (pred_d_numpy / pred_d_numpy.max()) * 255
+            pred_d_numpy = np.clip((pred_d_numpy / pred_d_numpy[15:,:].max()) * 255, 0,255)
+
             pred_d_numpy = pred_d_numpy.astype(np.uint8)
             pred_d_color = cv2.applyColorMap(pred_d_numpy, cv2.COLORMAP_RAINBOW)
             cv2.imwrite(save_path, pred_d_color)

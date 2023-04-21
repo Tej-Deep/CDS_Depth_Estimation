@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from torchinfo import summary
 import torchvision
 resnet = torchvision.models.resnet.resnet50(pretrained=True)
 
@@ -72,6 +73,8 @@ class UpBlockForUNetWithResNet50(nn.Module):
         :return: upsampled feature map
         """
         x = self.upsample(up_x)
+        print(x.shape)
+        print(down_x.shape)
         x = torch.cat([x, down_x], 1)
         x = self.conv_block_1(x)
         x = self.conv_block_2(x)
@@ -140,3 +143,8 @@ class UNetWithResnet50Encoder(nn.Module):
 # model = UNetWithResnet50Encoder().cuda()
 # inp = torch.rand((2, 3, 512, 512)).cuda()
 # out = model(inp)
+
+if __name__ == "__main__":
+    model = UNetWithResnet50Encoder(max_depth=10).cuda()
+    # print(model)
+    summary(model, input_size=(1,3,256,256))

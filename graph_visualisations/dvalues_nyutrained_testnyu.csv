@@ -2,7 +2,8 @@
 A,0.5,0.5,0.5
 densenet_epoch_02_model,0.5983,0.8708,0.9609
 densenet_epoch_15_model,0.6816,0.9217,0.9806
-Resnet_v3dec_small_lr,0.5762,0.8602,0.9579
-Resnet_v3dec,0.3783,0.6965,0.8742
+Resnet_v2dec_lower_lr,0.5762,0.8602,0.9579
+Resnet_v2dec,0.3783,0.6965,0.8742
 Resnet_v1dec,0.3832,0.6666,0.8423
 cnn_attention_v3_epoch_09_model,0.3833,0.6668,0.8423
+Resnet_v2dec_finetuned,0.6434,0.9066,0.9780

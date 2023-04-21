@@ -6,3 +6,4 @@ Resnet_v3dec_small_lr,0.2634
 Resnet_v3dec,0.3439
 Resnet_v1dec,0.4025
 cnn_attention_v3_epoch_09_model,0.4023
+Resnet_v2dec_finetuned,0.2332
