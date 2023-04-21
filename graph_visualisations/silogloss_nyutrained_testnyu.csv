@@ -7,3 +7,7 @@ Resnet_v3dec,0.3439
 Resnet_v1dec,0.4025
 cnn_attention_v3_epoch_09_model,0.4023
 Resnet_v2dec_finetuned,0.2332
+vanilla_unet,0.4097
+attention_unet,0.4093
+unet_resnet18_encoder,0.3623
+unet_resnet50_encoder,0.346
