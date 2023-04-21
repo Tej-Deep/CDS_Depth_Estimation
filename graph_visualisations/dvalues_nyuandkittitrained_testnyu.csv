@@ -5,3 +5,4 @@ vanilla_unet,0.3266,0.6065,0.814
 attention_unet,0.3265,0.6064,0.8139
 unet_resnet18_encoder,0.2044,0.4213,0.6444
 unet_resnet50_encoder,0.5368,0.7618,0.8757
+Resnet_v2dec_lower_lr,0.1543,0.3265,0.5237
