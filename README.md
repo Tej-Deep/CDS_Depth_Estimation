@@ -2,7 +2,7 @@
 Depth Estimation from Images using Computer Vision
 
 ## Installing Requirements
-
+We used python 3.7 for this project
 ```shell
 pip install -r requirements.txt
 ```
