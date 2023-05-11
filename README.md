@@ -2,11 +2,13 @@
 Depth Estimation from Images using Computer Vision
 
 ## Installing Requirements
-We used python 3.7 for this project
+We used python 3.7.7 for this project.
+
+Our code is built on pytorch version 1.13.1+cu116. We mention torch==1.13.1 in the requirements file but you might need to install a specific cuda version of torch depending on your GPU device type.
+
 ```shell
 pip install -r requirements.txt
 ```
-
 ## To Run Demo:
 ### Setting up the Demo
 Download the `ckpt` folder from the OneDrive link to get our trained model checkpoints for demo [here](https://sutdapac-my.sharepoint.com/:f:/g/personal/peixuan_lee_mymail_sutd_edu_sg/EpZJNFK_vIpFpSTxINMsr4oBfaxx_g_-J1M-TBHYXP90PA?e=aehY7G)
