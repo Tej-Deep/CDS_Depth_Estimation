@@ -1,5 +1,6 @@
 import gradio as gr
 import torch
+import os
 from models.pretrained_decv2 import enc_dec_model
 from models.densenet_v2 import Densenet
 from models.unet_resnet18 import ResNet18UNet
@@ -22,7 +23,7 @@ def cropping(img):
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 print(DEVICE)
-CWD = "C:/Users/ptejd/Documents/Computational_Data_Science/CDS_Depth_Estimation/MIM-Depth-Estimation"
+CWD = os.getcwd()
 CKPT_FILE_NAMES = {
     'Indoor':{
         'Resnet_enc':'resnet_nyu_best.ckpt',
@@ -73,7 +74,7 @@ def load_model(ckpt, model, optimizer=None):
 
 def predict(location, model_name, img):
     ckpt_dir = f"{CWD}/ckpt/{CKPT_FILE_NAMES[location][model_name]}"
-    if location == 'nyu':
+    if location == 'Indoor':
         max_depth = 10
     else:
         max_depth = 80
